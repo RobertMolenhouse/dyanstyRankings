@@ -20,16 +20,19 @@ const getPlayers = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const ktcPlayers = yield playerService.getKTCPlayerRankings();
     let rosters = [];
     teams.forEach((team) => {
-        //let squad: Roster;
         const owner = owners.find(user => {
             return user.user_id === team.owner_id;
         });
         const ownerName = (typeof owner !== 'undefined') ? owner.display_name : 'unknown';
+        const teamName = (typeof owner !== 'undefined') ? owner.metadata.team_name : 'unknown';
         let rankedPlayers = [];
         team['players'].forEach(player => {
             const sleeperPlayer = allSleepers[player];
             const ktcPlayer = ktcPlayers.find(p => {
-                return p.name === sleeperPlayer.full_name && p.age == sleeperPlayer.age;
+                return p.name.includes(sleeperPlayer.last_name)
+                    && p.age === sleeperPlayer.age
+                    && p.position === sleeperPlayer.position
+                    && p.name.substring(0, 1) == sleeperPlayer.first_name.substring(0, 1);
             });
             const toAdd = {
                 name: sleeperPlayer.full_name,
@@ -41,6 +44,7 @@ const getPlayers = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         });
         rosters.push({
             owner: ownerName,
+            teamName: teamName,
             players: rankedPlayers
         });
     });

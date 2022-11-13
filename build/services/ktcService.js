@@ -24,7 +24,7 @@ class ktcService {
             const playersArray = yield page.evaluate("playersArray");
             const smallArray = playersArray.map((player) => {
                 return {
-                    name: player.playerName.replace('.', ''),
+                    name: player.playerName.replaceAll('.', ''),
                     position: player.position,
                     rating: player.superflexValues.value,
                     age: player.age
